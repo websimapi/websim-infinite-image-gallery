@@ -24,7 +24,7 @@
     <div class="modal" id="commentModal">
         <div class="modal-content">
             <span class="close" onclick="closeCommentModal()">&times;</span>
-            <h3>Add Your Image</h3>
+            <h3>Add Your Art</h3>
             <div class="tab-container">
                 <button class="tab-btn active" onclick="switchTab('upload')">Upload</button>
                 <button class="tab-btn" onclick="switchTab('generate')">Generate AI</button>
@@ -32,15 +32,17 @@
             
             <div id="uploadTab" class="tab-content">
                 <input type="file" id="imageInput" accept="image/*" multiple>
+                <div class="image-preview-container" id="uploadPreview"></div>
             </div>
             
             <div id="generateTab" class="tab-content" style="display: none;">
-                <textarea id="promptInput" placeholder="Describe your image..."></textarea>
-                <button onclick="generateImage()">Generate Image</button>
+                <textarea id="promptInput" placeholder="Describe your masterpiece..."></textarea>
+                <button class="generate-btn" onclick="generateImage()">✨ Generate Image</button>
+                <div class="image-preview-container" id="generatePreview"></div>
             </div>
             
-            <textarea id="commentInput" placeholder="Add a comment..."></textarea>
-            <button onclick="submitComment()">Submit with Tip</button>
+            <textarea id="commentInput" placeholder="Share the story behind your art..."></textarea>
+            <button onclick="submitComment()" id="submitBtn">Submit with Tip</button>
         </div>
     </div>
 

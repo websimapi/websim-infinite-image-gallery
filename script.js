@@ -136,19 +136,36 @@ function switchTab(tabName) {
 
 async function generateImage() {
     const prompt = document.getElementById('promptInput').value;
+    const generateBtn = document.querySelector('.generate-btn');
+    const previewContainer = document.getElementById('generatePreview');
+    
     if (!prompt) {
         alert('Please enter a prompt');
         return;
     }
     
     try {
-        const result = await websim.imageGen({ prompt });
-        const generatedImages = [result.url];
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = '<span class="spinner"></span>Generating...';
+        previewContainer.innerHTML = '';
         
-        window.generatedImages = generatedImages;
-        alert('Image generated! Ready to submit.');
+        const result = await websim.imageGen({ prompt });
+        
+        // Create preview
+        const img = document.createElement('img');
+        img.src = result.url;
+        img.className = 'preview-image';
+        img.style.width = '200px';
+        img.style.height = '200px';
+        previewContainer.appendChild(img);
+        
+        window.generatedImages = [result.url];
+        
     } catch (error) {
         alert('Error generating image: ' + error.message);
+    } finally {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = '✨ Generate Image';
     }
 }
 
@@ -195,6 +212,36 @@ async function submitComment() {
     document.getElementById('commentInput').value = '';
     window.generatedImages = null;
 }
+
+// Handle preview for uploaded images
+document.addEventListener('DOMContentLoaded', () => {
+    const imageInput = document.getElementById('imageInput');
+    const uploadPreview = document.getElementById('uploadPreview');
+    
+    if (imageInput) {
+        imageInput.addEventListener('change', (e) => {
+            uploadPreview.innerHTML = '';
+            const files = Array.from(e.target.files);
+            
+            if (files.length > 4) {
+                alert('Maximum 4 images allowed');
+                e.target.value = '';
+                return;
+            }
+            
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'preview-image';
+                    uploadPreview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    }
+});
 
 // Update the file handling
 document.addEventListener('DOMContentLoaded', () => {
