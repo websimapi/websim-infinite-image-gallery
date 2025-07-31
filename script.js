@@ -120,36 +120,99 @@ function closeCommentModal() {
     document.getElementById('commentModal').style.display = 'none';
 }
 
-document.getElementById('imageForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+function switchTab(tabName) {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
     
-    const fileInput = document.getElementById('imageInput');
-    const commentInput = document.getElementById('commentInput');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    contents.forEach(content => content.style.display = 'none');
     
-    if (fileInput.files.length === 0) {
-        alert('Please select at least one image');
+    document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+    document.getElementById(`${tabName}Tab`).style.display = 'block';
+}
+
+async function generateImage() {
+    const prompt = document.getElementById('promptInput').value;
+    if (!prompt) {
+        alert('Please enter a prompt');
         return;
     }
     
-    const images = [];
-    const files = Array.from(fileInput.files);
-    for (const file of files.slice(0, 4)) {
-        const url = await window.websim.upload(file);
-        images.push(url);
+    try {
+        const result = await websim.imageGen({ prompt });
+        const generatedImages = [result.url];
+        
+        window.generatedImages = generatedImages;
+        alert('Image generated! Ready to submit.');
+    } catch (error) {
+        alert('Error generating image: ' + error.message);
     }
-    
+}
+
+async function submitComment() {
+    const commentInput = document.getElementById('commentInput');
     const content = commentInput.value || 'Great work! Here are some images';
     
-    await window.websim.postComment({
+    let images = [];
+    
+    // Check if we have generated images
+    if (window.generatedImages && window.generatedImages.length > 0) {
+        images = [...window.generatedImages];
+    } else {
+        // Check for uploaded files
+        const fileInput = document.getElementById('imageInput');
+        if (fileInput.files.length === 0) {
+            alert('Please select images or generate an AI image');
+            return;
+        }
+        
+        const files = Array.from(fileInput.files);
+        for (const file of files.slice(0, 4)) {
+            const url = await window.websim.upload(file);
+            images.push(url);
+        }
+    }
+    
+    const result = await window.websim.postComment({
         content: content,
         images: images
     });
     
+    if (result.error) {
+        alert('Error: ' + result.error);
+        return;
+    }
+    
     closeCommentModal();
-    document.getElementById('imageForm').reset();
+    
+    // Reset form
+    document.getElementById('imageForm')?.reset();
+    document.getElementById('imageInput').value = '';
+    document.getElementById('promptInput').value = '';
+    document.getElementById('commentInput').value = '';
+    window.generatedImages = null;
+}
+
+// Update the file handling
+document.addEventListener('DOMContentLoaded', () => {
+    const imageInput = document.getElementById('imageInput');
+    if (imageInput) {
+        imageInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length > 4) {
+                alert('Maximum 4 images allowed');
+                e.target.value = '';
+            }
+        });
+    }
 });
 
-const gallery = new ImageGallery();
+// Attach functions to global window object
+window.openCommentModal = openCommentModal;
+window.closeCommentModal = closeCommentModal;
+window.switchTab = switchTab;
+window.generateImage = generateImage;
+window.submitComment = submitComment;
 
 window.onclick = function(event) {
     const modal = document.getElementById('commentModal');
@@ -158,6 +221,4 @@ window.onclick = function(event) {
     }
 }
 
-// Attach modal functions to global window object
-window.openCommentModal = openCommentModal;
-window.closeCommentModal = closeCommentModal;
+const gallery = new ImageGallery();

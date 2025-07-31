@@ -17,27 +17,30 @@
 <body>
     <div class="background-container" id="backgroundContainer"></div>
     
-    <div class="overlay">
-        <div class="header">
-            <h1>Infinite Image Gallery</h1>
-            <p>Comment with any image and at least 10 credits tip to have your image featured in this infinite background</p>
-            <button class="upload-btn" onclick="openCommentModal()">Add Your Image</button>
-        </div>
-        
-        <div class="stats">
-            <span id="imageCount">0</span> images loaded
-        </div>
-    </div>
+    <button class="floating-btn" onclick="openCommentModal()">
+        <span class="plus-icon">+</span>
+    </button>
 
     <div class="modal" id="commentModal">
         <div class="modal-content">
             <span class="close" onclick="closeCommentModal()">&times;</span>
-            <h2>Add Your Image</h2>
-            <form id="imageForm">
+            <h3>Add Your Image</h3>
+            <div class="tab-container">
+                <button class="tab-btn active" onclick="switchTab('upload')">Upload</button>
+                <button class="tab-btn" onclick="switchTab('generate')">Generate AI</button>
+            </div>
+            
+            <div id="uploadTab" class="tab-content">
                 <input type="file" id="imageInput" accept="image/*" multiple>
-                <textarea id="commentInput" placeholder="Add a comment..."></textarea>
-                <button type="submit">Submit with Tip</button>
-            </form>
+            </div>
+            
+            <div id="generateTab" class="tab-content" style="display: none;">
+                <textarea id="promptInput" placeholder="Describe your image..."></textarea>
+                <button onclick="generateImage()">Generate Image</button>
+            </div>
+            
+            <textarea id="commentInput" placeholder="Add a comment..."></textarea>
+            <button onclick="submitComment()">Submit with Tip</button>
         </div>
     </div>
 
@@ -45,4 +48,3 @@
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
-
