@@ -66,10 +66,27 @@ class ImageGallery {
             const img = document.createElement('img');
             img.src = url;
             img.className = 'background-image';
-            img.style.left = Math.random() * (window.innerWidth - 300) + 'px';
-            img.style.top = Math.random() * (window.innerHeight - 200) + 'px';
-            img.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+            
+            // Calculate random position ensuring image stays within viewport
+            const maxX = window.innerWidth - Math.min(400, window.innerWidth * 0.8);
+            const maxY = window.innerHeight - Math.min(300, window.innerHeight * 0.8);
+            
+            img.style.left = Math.random() * maxX + 'px';
+            img.style.top = Math.random() * maxY + 'px';
+            img.style.transform = `rotate(${Math.random() * 20 - 10}deg) scale(${0.8 + Math.random() * 0.4})`;
             img.title = `By ${comment.author.display_name}`;
+            
+            // Ensure image loads properly before positioning
+            img.onload = () => {
+                // Adjust position if image overflows
+                const rect = img.getBoundingClientRect();
+                if (rect.right > window.innerWidth) {
+                    img.style.left = (window.innerWidth - rect.width - 20) + 'px';
+                }
+                if (rect.bottom > window.innerHeight) {
+                    img.style.top = (window.innerHeight - rect.height - 20) + 'px';
+                }
+            };
             
             img.addEventListener('click', () => {
                 this.showImageDetail(comment);
