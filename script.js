@@ -104,7 +104,10 @@ class ImageGallery {
     }
 
     updateStats() {
-        document.getElementById('imageCount').textContent = this.imageElements.length;
+        const imageCountElement = document.getElementById('imageCount');
+        if (imageCountElement) {
+            imageCountElement.textContent = this.imageElements.length;
+        }
     }
 
     showImageDetail(comment) {
