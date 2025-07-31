@@ -157,3 +157,6 @@ window.onclick = function(event) {
     }
 }
 
+// Attach modal functions to global window object
+window.openCommentModal = openCommentModal;
+window.closeCommentModal = closeCommentModal;
