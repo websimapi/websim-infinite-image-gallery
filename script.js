@@ -132,7 +132,8 @@ document.getElementById('imageForm').addEventListener('submit', async (e) => {
     }
     
     const images = [];
-    for (const file of fileInput.files.slice(0, 4)) {
+    const files = Array.from(fileInput.files);
+    for (const file of files.slice(0, 4)) {
         const url = await window.websim.upload(file);
         images.push(url);
     }
