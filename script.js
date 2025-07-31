@@ -66,25 +66,33 @@ class ImageGallery {
             const img = document.createElement('img');
             img.src = url;
             img.className = 'background-image';
+            img.style.width = '256px';
+            img.style.height = '256px';
             
             // Calculate random position ensuring image stays within viewport
-            const maxX = window.innerWidth - Math.min(400, window.innerWidth * 0.8);
-            const maxY = window.innerHeight - Math.min(300, window.innerHeight * 0.8);
+            const maxX = window.innerWidth - 256;
+            const maxY = window.innerHeight - 256;
             
             img.style.left = Math.random() * maxX + 'px';
             img.style.top = Math.random() * maxY + 'px';
-            img.style.transform = `rotate(${Math.random() * 20 - 10}deg) scale(${0.8 + Math.random() * 0.4})`;
+            img.style.zIndex = Math.floor(Math.random() * 50) + 1;
+            img.style.animationDelay = Math.random() * 6 + 's';
             img.title = `By ${comment.author.display_name}`;
+            
+            // Random z-index changes every 2-5 seconds
+            setInterval(() => {
+                img.style.zIndex = Math.floor(Math.random() * 50) + 1;
+            }, Math.random() * 3000 + 2000);
             
             // Ensure image loads properly before positioning
             img.onload = () => {
                 // Adjust position if image overflows
                 const rect = img.getBoundingClientRect();
                 if (rect.right > window.innerWidth) {
-                    img.style.left = (window.innerWidth - rect.width - 20) + 'px';
+                    img.style.left = (window.innerWidth - 256 - 20) + 'px';
                 }
                 if (rect.bottom > window.innerHeight) {
-                    img.style.top = (window.innerHeight - rect.height - 20) + 'px';
+                    img.style.top = (window.innerHeight - 256 - 20) + 'px';
                 }
             };
             
